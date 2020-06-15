@@ -28,15 +28,19 @@ def s1_parser(attributes, sentence):
     attributes['obj'] = sentence[3]
 
 def s2_parser(attributes, sentence):
-    entity = sentence[7] if sentence[6] == 'my' else sentence[6]
+    entity = ' '.join(sentence[6:8]) if sentence[6] == 'my' else sentence[6]
     attributes['entity'] = entity
-    attributes['location'] = sentence[-1]
-
+    loc = ' '.join(sentence[-2::]) if sentence[-2] == 'the' else sentence[-1]
+    attributes['location'] = loc
 
 def s3_parser(attributes, sentence):
-    e_idx = 1 if sentence[0] == 'my' else 0
-    attributes['entity'] = sentence[e_idx]
-    attributes['posses'] = sentence[e_idx + 1]
+    if sentence[0] == 'my':
+        attributes['entity'] = ' '.join(sentence[:2])
+        attributes['posses'] = sentence[2]
+    else:
+        attributes['entity'] = sentence[0]
+        attributes['posses'] = sentence[1]
+
     attributes['adverb'] = sentence[-2]
     attributes['obj'] = sentence[-1]
 
