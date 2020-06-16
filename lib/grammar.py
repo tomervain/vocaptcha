@@ -111,7 +111,7 @@ grammar = {
         'fast',
         'old',
         'new',
-        'beutiful',
+        'beautiful',
         '<color>',
         'expensive',
         'cheap'
