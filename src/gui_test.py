@@ -1,9 +1,16 @@
 import tkinter as tk
+import time
+import sys
+
+sys.path.append('..')
 from lib.sentence_generator import generate
 from lib.qa_generator import generate_qa
 from lib.tts_module import text_to_speech as tts
 from lib.asr_module import transcribe_streaming as asr
 from lib.speach_rec import record_to_file as rec
+
+
+from random import shuffle, sample
 import os
 
 def start_test():
@@ -11,24 +18,28 @@ def start_test():
     qa_pairs = []
     for sentence in sentences:
         qa_pairs += generate_qa(sentence)
+    shuffle(qa_pairs)
+    pairs = sample(qa_pairs, k=3)
 
-    for sentence, qa in zip(sentences, qa_pairs):
-        tts(sentence.sentence_str)
+    for s in sentences:
+        tts(s.sentence_str)
+        time.sleep(1.5)
+
+    for qa in pairs:
         tts(qa[0])
-
         print("please speak a word into the microphone")
         rec("user_voice.wav")
         result = asr("user_voice.wav")
+        
 
         if result is None:
             tts("Sorry but i dont understand")
-            pass
         else:
-            print(*result, " == ", qa[1])
+            print(result[0], " == ", qa[1])
             if ''.join(result).lower() == qa[1].lower():
-                tts("good boy")
+                tts("that is correct!")
             else:
-                tts("very bad")
+                tts("that is wrong!")
 
 
 
