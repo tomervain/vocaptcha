@@ -20,11 +20,15 @@ def start_test():
         rec("user_voice.wav")
         result = asr("user_voice.wav")
 
-        print(*result, " == ", qa[1])
-        if ''.join(result) == qa[1]:
-            tts("good boy")
+        if result is None:
+            tts("Sorry but i dont understand")
+            pass
         else:
-            tts("very bad")
+            print(*result, " == ", qa[1])
+            if ''.join(result) == qa[1].lower():
+                tts("good boy")
+            else:
+                tts("very bad")
 
 
 
