@@ -9,9 +9,10 @@ from lib.tts_module import text_to_speech as tts
 from lib.asr_module import transcribe_streaming as asr
 from lib.speach_rec import record_to_file as rec
 
-
 from random import shuffle, sample
 import os
+import threading
+
 
 def start_test():
     sentences = generate()
@@ -53,7 +54,9 @@ if __name__ == "__main__":
     greeting = tk.Label(text="Hello, Tkinter", width=60, height=10)
     greeting.grid(row=0, column=0)
 
-    start_btn = tk.Button(window, text="Begin Test", command=start_test)
+    start_test_thread = threading.Thread(target=start_test)
+    start_test_thread.setDaemon(True)
+    start_btn = tk.Button(window, text="Begin Test", command=start_test_thread.start)
     start_btn.grid(row=1, column=0)
 
     quit_btn = tk.Button(window, text="Quit", command=window.quit)
