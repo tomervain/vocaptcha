@@ -14,6 +14,10 @@ import threading
 from random import shuffle, sample
 import os
 
+def thread_test():
+    start_test_thread = threading.Thread(target=start_test)
+    start_test_thread.setDaemon(True)
+    start_test_thread.start()
 
 def start_test():
     sentences = generate()
@@ -56,12 +60,11 @@ if __name__ == "__main__":
     greeting = tk.Label(text="Hello, Tkinter", width=60, height=10)
     greeting.grid(row=0, column=0)
 
-    start_test_thread = threading.Thread(target=start_test)
-    start_test_thread.setDaemon(True)
-    start_btn = tk.Button(window, text="Begin Test", command=start_test_thread.start)
+
+    start_btn = tk.Button(window, text="Begin Test", command=thread_test)
     start_btn.grid(row=1, column=0)
 
-    quit_btn = tk.Button(window, text="Quit", command=window.quit())
+    quit_btn = tk.Button(window, text="Quit", command=window.quit)
     quit_btn.grid(row=1, column=1)
 
     window.mainloop()
