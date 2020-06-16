@@ -3,7 +3,6 @@ from google.cloud import speech_v1 as speech
 from google.cloud.speech_v1 import enums
 from google.cloud.speech_v1 import types
 from playsound import playsound as ps
-import speech_recognition as sr
 import traceback
 import pyaudio
 from six.moves import queue
@@ -110,34 +109,6 @@ def sample_recognize(local_file_path):
 # [END speech_transcribe_sync]
 
 #############
-
-def stt(audio_file):
-    # Initialize recognizer class (for recognizing the speech)
-    r = sr.Recognizer()
-
-    # Reading Audio file as source
-    # listening the audio file and store in audio_text variable
-
-    with sr.AudioFile(audio_file) as source:
-
-        audio_text = r.listen(source)
-
-        # recoginize_() method will throw a request error if the API is unreachable, hence using exception handling
-        try:
-
-            # using google speech recognition
-            # credentials_json = 'C:\\Temp\\keys\\VoCapcha-20b5d5975db7.json'
-            text = r.recognize_google(audio_text)
-            print('Converting audio transcripts into text ...')
-            print(text)
-
-        except sr.RequestError:
-            track = traceback.format_exc()
-            print('RequestError:', track)
-
-        except sr.UnknownValueError:
-            track = traceback.format_exc()
-            print('UnknownValueError:', track)
 
 #######
 

@@ -8,10 +8,12 @@ from lib.qa_generator import generate_qa
 from lib.tts_module import text_to_speech as tts
 from lib.asr_module import transcribe_streaming as asr
 from lib.speach_rec import record_to_file as rec
+import threading
 
 
 from random import shuffle, sample
 import os
+
 
 def start_test():
     sentences = generate()
@@ -30,7 +32,7 @@ def start_test():
         print("please speak a word into the microphone")
         rec("user_voice.wav")
         result = asr("user_voice.wav")
-        
+
 
         if result is None:
             tts("Sorry but i dont understand")
@@ -41,6 +43,7 @@ def start_test():
             else:
                 tts("that is wrong!")
 
+    print("test finished")
 
 
 if __name__ == "__main__":
@@ -53,10 +56,12 @@ if __name__ == "__main__":
     greeting = tk.Label(text="Hello, Tkinter", width=60, height=10)
     greeting.grid(row=0, column=0)
 
-    start_btn = tk.Button(window, text="Begin Test", command=start_test)
+    start_test_thread = threading.Thread(target=start_test)
+    start_test_thread.setDaemon(True)
+    start_btn = tk.Button(window, text="Begin Test", command=start_test_thread.start)
     start_btn.grid(row=1, column=0)
 
-    quit_btn = tk.Button(window, text="Quit", command=window.quit)
+    quit_btn = tk.Button(window, text="Quit", command=window.quit())
     quit_btn.grid(row=1, column=1)
 
     window.mainloop()

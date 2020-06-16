@@ -1,4 +1,5 @@
 from random import sample, shuffle
+from fuzzywuzzy import fuzz
 import pyphonetics as pp
 import sys
 
@@ -11,18 +12,6 @@ from lib.qa_generator import generate_qa
 
 # for s in sentences:
 #     print(s, '\n')
-
-# test phonetic comparison
-s1 = 'Brian'
-s2 = 'Ryan'
-soundex = pp.Soundex()
-
-print(f'{s1}: {soundex.phonetics(s1)}')
-print(f'{s2}: {soundex.phonetics(s2)}')
-print(f'distance: {soundex.distance(s1,s2)}')
-
-similar = True if soundex.distance(s1,s2) < 2 else False
-print(f'similar: {similar}')
 
 # test full workflow:
 # sentences = generate()
@@ -42,3 +31,29 @@ print(f'similar: {similar}')
 # for i, p in enumerate(pairs):
 #     print(f'{i+1}. {p[1]}')
 
+
+# test phonetic comparison
+def phonetic_form(s, soundex):
+    phon = []
+    s_words = s.split(' ')
+    for w in s_words:
+        phon.append(soundex.phonetics(w))
+    
+    return ' '.join(phon)
+
+def compare(s1, s2, soundex):
+    ratio = soundex.distance(s1,s2)
+    return (ratio, True) if ratio < 2 else (ratio, False)
+
+s1 = 'Glue'
+s2 = 'Wall'
+soundex = pp.Soundex()
+
+s1_p = phonetic_form(s1, soundex)
+s2_p = phonetic_form(s2, soundex)
+print(f'{s1}: {s1_p}')
+print(f'{s2}: {s2_p}')
+
+ratio, similar = compare(s1_p, s2_p, soundex)
+print(f'distance: {ratio}')
+print(f'similar: {similar}')
