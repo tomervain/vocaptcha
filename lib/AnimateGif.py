@@ -37,12 +37,6 @@ class AnimateGif:
         self.delay_time = 50
 
 
-root = tk.Tk()
-app = AnimateGif(root, 0, 0)
-
-start_btn = tk.Button(root, text="Begin Test", command=app.set_mic_on)
-start_btn.grid(row=1, column=1)
 
 
 
-root.mainloop()
