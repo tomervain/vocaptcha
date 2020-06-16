@@ -25,7 +25,7 @@ def start_test():
             pass
         else:
             print(*result, " == ", qa[1])
-            if ''.join(result) == qa[1].lower():
+            if ''.join(result).lower() == qa[1].lower():
                 tts("good boy")
             else:
                 tts("very bad")
