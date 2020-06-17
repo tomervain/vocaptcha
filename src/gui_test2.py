@@ -8,20 +8,26 @@ from lib.qa_generator import generate_qa
 from lib.tts_module import text_to_speech as tts
 from lib.asr_module import transcribe_streaming as asr
 from lib.speach_rec import record_to_file as rec
+from playsound import playsound as ps
+
 import lib.AnimateGif as AG
 import threading
 
 from random import shuffle, sample
 import os
 
+project_path = os.path.dirname(os.path.dirname(os.path.abspath(" ")))
 
-def thread_test(ag):
-    start_test_thread = threading.Thread(target=lambda:start_test(ag))
+def thread_test(ag, intro):
+
+    start_test_thread = threading.Thread(target=lambda:start_test(ag, intro))
     start_test_thread.setDaemon(True)
     start_test_thread.start()
 
+def start_test(ag, intro):
 
-def start_test(ag):
+    ps(project_path + "\\resources\\" + intro + ".mp3")
+
     sentences = generate()
     qa_pairs = []
     for sentence in sentences:
@@ -42,13 +48,14 @@ def start_test(ag):
         result = asr("user_voice.wav")
         ag.set_audio_wave()
         if result is None:
-            tts("Sorry but i dont understand")
+            ps(project_path + "\\resources\\bad_results.mp3")
         else:
             print(result[0], " == ", qa[1])
             if ''.join(result).lower() == qa[1].lower():
-                tts("that is correct!")
+                ps(project_path + "\\resources\\correct.mp3")
+
             else:
-                tts("that is wrong!")
+                ps(project_path + "\\resources\\wrong.mp3")
 
     print("test finished")
 
@@ -57,17 +64,20 @@ if __name__ == "__main__":
     window = tk.Tk(screenName='VoCAPTCHA Demo')
     window.title("VoCAPTCHA")
 
-    project_path = os.path.dirname(os.path.dirname(os.path.abspath(" ")))
     window.iconbitmap(project_path + '\\resources\\vocapcha_icon.ico')
 
     ag = AG.AnimateGif(window, 0, 1)
     greeting = tk.Label(text="Hello, Tkinter", width=60, height=10)
     greeting.grid(row=0, column=0)
 
-    start_btn = tk.Button(window, text="Begin Test", command=lambda: thread_test(ag))
-    start_btn.grid(row=1, column=0)
+    start_btn_long = tk.Button(window, text="Begin Test", command=lambda: thread_test(ag, 'long_intro'))
+    start_btn_long.grid(row=1, column=0)
+
+    start_btn_short = tk.Button(window, text="Quick start", command=lambda: thread_test(ag, 'short_intro'))
+    start_btn_short.grid(row=1, column=1)
 
     quit_btn = tk.Button(window, text="Quit", command=window.quit)
-    quit_btn.grid(row=1, column=1)
+    quit_btn.grid(row=1, column=2)
+
 
     window.mainloop()
