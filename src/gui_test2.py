@@ -1,20 +1,21 @@
-import tkinter as tk
-import time
+import os
 import sys
+import threading
+import time
+import tkinter as tk
+from random import sample, shuffle
 
 sys.path.append('..')
-from lib.sentence_generator import generate
-from lib.qa_generator import generate_qa
-from lib.tts_module import text_to_speech as tts
-from lib.asr_module import transcribe_streaming as asr
-from lib.speach_rec import record_to_file as rec
-from playsound import playsound as ps
 
 import lib.AnimateGif as AG
-import threading
+from lib.asr_module import transcribe_streaming as asr
+from lib.qa_generator import generate_qa
+from lib.sentence_generator import generate
+from lib.speach_rec import record_to_file as rec
+from lib.tts_module import text_to_speech as tts
+from playsound import playsound as ps
 
-from random import shuffle, sample
-import os
+
 
 project_path = os.path.dirname(os.path.dirname(os.path.abspath(" ")))
 

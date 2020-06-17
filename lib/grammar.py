@@ -97,6 +97,7 @@ grammar = {
         'old',
         'smart',
         'dumb',
+        'silly',
         'shy',
         'playful'
     ],
