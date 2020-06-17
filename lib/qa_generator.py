@@ -37,8 +37,22 @@ def qa_parser_s3(attributes):
     qa_pairs.append((f'What is known about {entity}\'s {obj}?', adverb))
     return qa_pairs
 
+
+def qa_parser_s4(attributes):
+    entity = attributes['entity']
+    animal = attributes['animal']
+    prep = attributes['prep']
+    location = attributes['location']
+    det = 'an' if animal[0] in 'AEIOU' else 'a'
+    qa_pairs = []
+    qa_pairs.append((f'What animal did {entity} saw {prep} the {location}?', animal))
+    qa_pairs.append((f'Who saw {det} {animal} {prep} the {location}?', entity))
+    qa_pairs.append((f'Where did {entity} saw {det} {animal}?', location))
+    return qa_pairs
+
 qa_parsers = {
     'S1': qa_parser_s1,
     'S2': qa_parser_s2,
-    'S3': qa_parser_s3
+    'S3': qa_parser_s3,
+    'S4': qa_parser_s4
 }
