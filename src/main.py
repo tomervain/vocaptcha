@@ -37,8 +37,27 @@ def preprocess(s):
 
 
 def start_test(aw, intro):
+    if intro == 'long_intro':
+        aw.play(f'../resources/{intro}.wav')
 
-    aw.play(f'../resources/{intro}.wav')
+
+        while True:
+            print("please speak a word into the microphone")
+            speak_indicator.config(bg="green")
+            rec("user_voice.wav")
+            speak_indicator.config(bg="red")
+
+            result, confidence = asr("user_voice.wav")
+            print('Confidence:', confidence)
+            if len(result) == 0:
+                aw.play(f'../resources/bad_result.wav')
+            elif confidence < 0.8:
+                aw.play(f'../resources/bad_result.wav')
+            elif result[0] == 'ok' or result[0] == 'okay':
+                break
+
+
+    aw.play(f'../resources/short_intro.wav')
 
     sentences = generate()
     qa_pairs = []
@@ -52,6 +71,7 @@ def start_test(aw, intro):
         tts(s.sentence_str, aw)
         time.sleep(2)
 
+    score = 0
     for qa in pairs:
         tts(qa[0], aw)
 
@@ -73,17 +93,24 @@ def start_test(aw, intro):
                 is_result_ok = True
             tries += 1
 
+        if not is_result_ok:
+            continue
         print('before preprocess:', result[0], " == ", qa[1])
         res = preprocess(result[0])
         ans = preprocess(qa[1])
         print('after preprocess:', res, " == ", ans)
         if fuzz.ratio(res, ans) >= 90:
             aw.play(f'../resources/correct.wav')
+            score += 1
         elif tries < 3:
             aw.play(f'../resources/wrong.wav')
 
     text_label.config(text="")
-    print("test finished")
+
+    if score > 1:
+        aw.play(f'../resources/test_passed.wav')
+    else:
+        aw.play(f'../resources/test_failed.wav')
 
 
 if __name__ == "__main__":
