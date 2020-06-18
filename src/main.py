@@ -54,26 +54,31 @@ def start_test(aw, intro):
 
     for qa in pairs:
         tts(qa[0], aw)
-        print("please speak a word into the microphone")
-        speak_indicator.config(bg="green")
-        rec("user_voice.wav")
-        speak_indicator.config(bg="red")
 
-        result, confidence = asr("user_voice.wav")
-        print('Confidence:', confidence)
-        if result == [] or confidence == []:
-            aw.play(f'../resources/bad_result.wav')
-        elif confidence < 0.75:
-            aw.play(f'../resources/bad_result.wav')
-        else:
-            print('before preprocess:', result[0], " == ", qa[1])
-            res = preprocess(result[0])
-            ans = preprocess(qa[1])
-            print('after preprocess:', res, " == ", ans)
-            if fuzz.ratio(res, ans) >= 90:
-                aw.play(f'../resources/correct.wav')
+        is_result_ok = False
+        while not is_result_ok:
+            print("please speak a word into the microphone")
+            speak_indicator.config(bg="green")
+            rec("user_voice.wav")
+            speak_indicator.config(bg="red")
+
+            result, confidence = asr("user_voice.wav")
+            print('Confidence:', confidence)
+            if len(result) == 0:
+                aw.play(f'../resources/bad_result.wav')
+            elif confidence < 0.75:
+                aw.play(f'../resources/bad_result.wav')
             else:
-                aw.play(f'../resources/wrong.wav')
+                is_result_ok = True
+
+        print('before preprocess:', result[0], " == ", qa[1])
+        res = preprocess(result[0])
+        ans = preprocess(qa[1])
+        print('after preprocess:', res, " == ", ans)
+        if fuzz.ratio(res, ans) >= 90:
+            aw.play(f'../resources/correct.wav')
+        else:
+            aw.play(f'../resources/wrong.wav')
 
     text_label.config(text="")
     print("test finished")
