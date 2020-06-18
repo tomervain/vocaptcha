@@ -20,17 +20,14 @@ from lib.tts_module import text_to_speech as tts
 
 nlp = spacy.load('en_core_web_sm')
 
-
 def draw_fig(fig):
     fig.canvas.draw()
     fig.canvas.flush_events()
-
 
 def thread_test(ag, intro):
     start_test_thread = threading.Thread(target=lambda: start_test(ag, intro))
     start_test_thread.setDaemon(True)
     start_test_thread.start()
-
 
 def preprocess(s):
     s = s.lower()
@@ -40,6 +37,7 @@ def preprocess(s):
 
 
 def start_test(aw, intro):
+
     aw.play(f'../resources/{intro}.wav')
 
     sentences = generate()
@@ -56,27 +54,33 @@ def start_test(aw, intro):
 
     for qa in pairs:
         tts(qa[0], aw)
-        print("please speak a word into the microphone")
-        speak_indicator.config(bg="green")
-        rec("user_voice.wav")
-        speak_indicator.config(bg="red")
 
-        result, confidence = asr("user_voice.wav")
-        print('Confidence:', confidence)
-        if result == [] or confidence == []:
-            aw.play(f'../resources/bad_result.wav')
-        elif confidence < 0.75:
-            aw.play(f'../resources/bad_result.wav')
-        else:
-            print('Input:', result[0].lower())
-            print('before preprocess:', result[0], " == ", qa[1])
-            res = preprocess(result[0])
-            ans = preprocess(qa[1])
-            print('after preprocess:', res, " == ", ans)
-            if fuzz.ratio(res, ans) >= 90:
-                aw.play(f'../resources/correct.wav')
+        is_result_ok = False
+        tries = 0
+        while not is_result_ok and tries < 3:
+            print("please speak a word into the microphone")
+            speak_indicator.config(bg="green")
+            rec("user_voice.wav")
+            speak_indicator.config(bg="red")
+
+            result, confidence = asr("user_voice.wav")
+            print('Confidence:', confidence)
+            if len(result) == 0:
+                aw.play(f'../resources/bad_result.wav')
+            elif confidence < 0.8:
+                aw.play(f'../resources/bad_result.wav')
             else:
-                aw.play(f'../resources/wrong.wav')
+                is_result_ok = True
+            tries += 1
+
+        print('before preprocess:', result[0], " == ", qa[1])
+        res = preprocess(result[0])
+        ans = preprocess(qa[1])
+        print('after preprocess:', res, " == ", ans)
+        if fuzz.ratio(res, ans) >= 90:
+            aw.play(f'../resources/correct.wav')
+        elif tries < 3:
+            aw.play(f'../resources/wrong.wav')
 
     text_label.config(text="")
     print("test finished")
@@ -89,17 +93,22 @@ if __name__ == "__main__":
     screensize = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
 
     window = tk.Tk()
-    window.minsize(width=int(screensize[0] / 2), height=int(screensize[1] / 2))
     window.title("VoCAPTCHA")
     window.iconbitmap('../resources/vocapcha_icon.ico')
-    window.tk.call('tk', 'scaling', screensize[0] / 1000)
+
+    window.minsize(width=int(screensize[0] / 2), height=int(screensize[1] / 2))
+    # window.tk.call('tk', 'scaling', screensize[0]/1000)
+    user = os.getenv('username')
+    if user == 'tomer':
+        window.tk.call('tk', 'scaling', 4.0)
+
 
     ag = AudioWave(window, draw_fig)
     text_label = tk.Label(text="", relief="solid")
     text_label.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
 
     # flat, groove, raised, ridge, solid, or sunken
-    speak_indicator = tk.Label(text="Indicator", bg="red", relief="solid")
+    speak_indicator = tk.Label(text="Indicator", font="bold", bg="red", relief="solid")
     speak_indicator.pack(side=tk.RIGHT, fill=tk.BOTH, expand=1)
 
     start_btn = tk.Button(window, text="Begin Test",

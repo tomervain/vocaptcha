@@ -79,7 +79,7 @@ def start_test(aw, intro):
         print('after preprocess:', res, " == ", ans)
         if fuzz.ratio(res, ans) >= 90:
             aw.play(f'../resources/correct.wav')
-        else if tries < 3:
+        elif tries < 3:
             aw.play(f'../resources/wrong.wav')
 
     text_label.config(text="")
@@ -98,7 +98,9 @@ if __name__ == "__main__":
 
     window.minsize(width=int(screensize[0] / 2), height=int(screensize[1] / 2))
     # window.tk.call('tk', 'scaling', screensize[0]/1000)
-    window.tk.call('tk', 'scaling', 4.0)
+    user = os.getenv('username')
+    if user == 'tomer':
+        window.tk.call('tk', 'scaling', 4.0)
 
     ag = AudioWave(window, draw_fig)
     text_label = tk.Label(text="", relief="solid")
