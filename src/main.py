@@ -48,6 +48,7 @@ def start_test(aw, intro):
     pairs = sample(qa_pairs, k=3)
 
     for s in sentences:
+        text_label.config(text=text_label.cget("text") + "\n" + s.sentence_str)
         tts(s.sentence_str, aw)
         time.sleep(2)
 
@@ -73,19 +74,20 @@ def start_test(aw, intro):
             else:
                 aw.play(f'../resources/wrong.wav')
 
+    text_label.config(text="")
     print("test finished")
 
 
 if __name__ == "__main__":
-    global speak_indicator
+    global speak_indicator, text_label
 
     window = tk.Tk()
     window.title("VoCAPTCHA")
     window.iconbitmap('../resources/vocapcha_icon.ico')
 
     ag = AudioWave(window, draw_fig)
-    greeting = tk.Label(text="Hello, Tkinter")
-    greeting.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
+    text_label = tk.Label(text="")
+    text_label.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
 
     # flat, groove, raised, ridge, solid, or sunken
     speak_indicator = tk.Label(text="Indicator", font="bold", bg="red", relief="solid")
