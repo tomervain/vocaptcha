@@ -8,11 +8,10 @@ from fuzzywuzzy import fuzz
 from random import sample, shuffle
 from playsound import playsound as ps
 
-from lib.AudioWave import AudioWave
-
 sys.path.append('..')
 
 import lib.AnimateGif as AG
+from lib.AudioWave import AudioWave
 from lib.asr_module import transcribe_streaming as asr
 from lib.qa_generator import generate_qa
 from lib.sentence_generator import generate
@@ -59,8 +58,10 @@ def start_test(aw, intro):
         rec("user_voice.wav")
         speak_indicator.config(bg="red")
 
-        result = asr("user_voice.wav")
-        if result is None:
+        result, confidence = asr("user_voice.wav")
+        print('Confidence:', confidence)
+        print('Input:', result[0].lower())
+        if result is None and confidence < 0.75:
             aw.play(f'../resources/bad_result.wav')
         else:
             print('before preprocess:', result[0], " == ", qa[1])

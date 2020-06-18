@@ -17,7 +17,7 @@ class AudioWave():
 
         self.parent = parent
         self.task = task
-        self.fig, self.ax = plt.subplots(1, figsize=(7, 4))
+        self.fig, self.ax = plt.subplots(1, figsize=(4, 2))
 
         self.canvas = FigureCanvasTkAgg(self.fig, master=parent)
         self.canvas.get_tk_widget().grid(row=row, column=column)
@@ -37,6 +37,7 @@ class AudioWave():
         self.ax.set_xlim(0, 2 * self.CHUNK)
 
         plt.setp(self.ax, xticks=[0, self.CHUNK, 2 * self.CHUNK], yticks=[0, 128, 255])
+        plt.axis('off')
 
     def play(self, wav_file):
         try:
