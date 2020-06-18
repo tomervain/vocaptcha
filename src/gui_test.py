@@ -7,7 +7,7 @@ from lib.sentence_generator import generate
 from lib.qa_generator import generate_qa
 from lib.tts_module import text_to_speech as tts
 from lib.asr_module import transcribe_streaming as asr
-from lib.speach_rec import record_to_file as rec
+from lib.speech_rec import record_to_file as rec
 
 from random import shuffle, sample
 import os

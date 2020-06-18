@@ -11,24 +11,27 @@ import lib.AnimateGif as AG
 from lib.asr_module import transcribe_streaming as asr
 from lib.qa_generator import generate_qa
 from lib.sentence_generator import generate
-from lib.speach_rec import record_to_file as rec
+from lib.speech_rec import record_to_file as rec
 from lib.tts_module import text_to_speech as tts
+import lib.AudioWave as AW
 from playsound import playsound as ps
 
-
+def draw_fig(fig):
+    fig.canvas.draw()
+    fig.canvas.flush_events()
 
 project_path = os.path.dirname(os.path.dirname(os.path.abspath(" ")))
 
-def thread_test(ag, intro):
+def thread_test(aw, intro):
 
-    start_test_thread = threading.Thread(target=lambda:start_test(ag, intro))
+    start_test_thread = threading.Thread(target=lambda:start_test(aw, intro))
     start_test_thread.setDaemon(True)
     start_test_thread.start()
 
-def start_test(ag, intro):
+def start_test(aw, intro):
 
-    ps(project_path + "\\resources\\" + intro + ".mp3")
-
+   # ps(project_path + "\\resources\\" + intro + ".mp3")
+    aw.play(project_path + "\\resources\\" + intro +".wav")
     sentences = generate()
     qa_pairs = []
     for sentence in sentences:
@@ -37,48 +40,58 @@ def start_test(ag, intro):
     pairs = sample(qa_pairs, k=3)
 
     for s in sentences:
-        tts(s.sentence_str)
+        tts(s.sentence_str, aw)
         time.sleep(1.5)
 
     for qa in pairs:
-        ag.set_audio_wave()
-        tts(qa[0])
-        ag.set_mic_on()
+        tts(qa[0], aw)
         print("please speak a word into the microphone")
+        speak_indicator.config(bg="green")
         rec("user_voice.wav")
+        speak_indicator.config(bg="red")
         result = asr("user_voice.wav")
-        ag.set_audio_wave()
         if result is None:
-            ps(project_path + "\\resources\\bad_results.mp3")
+            aw.play(project_path + "\\resources\\bad_results.wav")
+            #ps(project_path + "\\resources\\bad_results.mp3")
         else:
             print(result[0], " == ", qa[1])
             if ''.join(result).lower() == qa[1].lower():
-                ps(project_path + "\\resources\\correct.mp3")
+                aw.play(project_path + "\\resources\\correct.wav")
+                #ps(project_path + "\\resources\\correct.mp3")
 
             else:
-                ps(project_path + "\\resources\\wrong.mp3")
+                aw.play(project_path + "\\resources\\wrong.wav")
+              #  ps(project_path + "\\resources\\wrong.mp3")
 
     print("test finished")
 
 
 if __name__ == "__main__":
+    global speak_indicator
+
     window = tk.Tk(screenName='VoCAPTCHA Demo')
     window.title("VoCAPTCHA")
 
     window.iconbitmap(project_path + '\\resources\\vocapcha_icon.ico')
 
-    ag = AG.AnimateGif(window, 0, 1)
+    aw = AW.AudioWave(window, 0, 1, draw_fig)
+   # ag = AG.AnimateGif(window, 0, 1)
     greeting = tk.Label(text="Hello, Tkinter", width=60, height=10)
     greeting.grid(row=0, column=0)
 
-    start_btn_long = tk.Button(window, text="Begin Test", command=lambda: thread_test(ag, 'long_intro'))
-    start_btn_long.grid(row=1, column=0)
+# flat, groove, raised, ridge, solid, or sunken
+    speak_indicator = tk.Label(text=" ", bg="red", width=60, height=10, relief="solid")
+    speak_indicator.grid(row=1, column=1)
 
-    start_btn_short = tk.Button(window, text="Quick start", command=lambda: thread_test(ag, 'short_intro'))
-    start_btn_short.grid(row=1, column=1)
+
+    start_btn_long = tk.Button(window, text="Begin Test", command=lambda: thread_test(aw, 'long_intro'))
+    start_btn_long.grid(row=2, column=0)
+
+    start_btn_short = tk.Button(window, text="Quick start", command=lambda: thread_test(aw, 'short_intro'))
+    start_btn_short.grid(row=2, column=1)
 
     quit_btn = tk.Button(window, text="Quit", command=window.quit)
-    quit_btn.grid(row=1, column=2)
+    quit_btn.grid(row=2, column=2)
 
 
     window.mainloop()
