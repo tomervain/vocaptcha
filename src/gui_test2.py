@@ -6,13 +6,12 @@ import spacy
 import tkinter as tk
 from fuzzywuzzy import fuzz
 from random import sample, shuffle
-from playsound import playsound as ps
-
-from lib.AudioWave import AudioWave
+import ctypes
 
 sys.path.append('..')
 
 import lib.AnimateGif as AG
+from lib.AudioWave import AudioWave
 from lib.asr_module import transcribe_streaming as asr
 from lib.qa_generator import generate_qa
 from lib.sentence_generator import generate
@@ -21,14 +20,17 @@ from lib.tts_module import text_to_speech as tts
 
 nlp = spacy.load('en_core_web_sm')
 
+
 def draw_fig(fig):
     fig.canvas.draw()
     fig.canvas.flush_events()
+
 
 def thread_test(ag, intro):
     start_test_thread = threading.Thread(target=lambda: start_test(ag, intro))
     start_test_thread.setDaemon(True)
     start_test_thread.start()
+
 
 def preprocess(s):
     s = s.lower()
@@ -38,7 +40,6 @@ def preprocess(s):
 
 
 def start_test(aw, intro):
-
     aw.play(f'../resources/{intro}.wav')
 
     sentences = generate()
@@ -49,6 +50,7 @@ def start_test(aw, intro):
     pairs = sample(qa_pairs, k=3)
 
     for s in sentences:
+        text_label.config(text=text_label.cget("text") + "\n" + s.sentence_str)
         tts(s.sentence_str, aw)
         time.sleep(2)
 
@@ -59,10 +61,14 @@ def start_test(aw, intro):
         rec("user_voice.wav")
         speak_indicator.config(bg="red")
 
-        result = asr("user_voice.wav")
-        if result is None:
+        result, confidence = asr("user_voice.wav")
+        print('Confidence:', confidence)
+        if result == [] or confidence == []:
+            aw.play(f'../resources/bad_result.wav')
+        elif confidence < 0.75:
             aw.play(f'../resources/bad_result.wav')
         else:
+            print('Input:', result[0].lower())
             print('before preprocess:', result[0], " == ", qa[1])
             res = preprocess(result[0])
             ans = preprocess(qa[1])
@@ -72,22 +78,28 @@ def start_test(aw, intro):
             else:
                 aw.play(f'../resources/wrong.wav')
 
+    text_label.config(text="")
     print("test finished")
 
 
 if __name__ == "__main__":
-    global speak_indicator
+    global speak_indicator, text_label
+
+    user32 = ctypes.windll.user32
+    screensize = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
 
     window = tk.Tk()
+    window.minsize(width=int(screensize[0] / 2), height=int(screensize[1] / 2))
     window.title("VoCAPTCHA")
     window.iconbitmap('../resources/vocapcha_icon.ico')
+    window.tk.call('tk', 'scaling', screensize[0] / 1000)
 
     ag = AudioWave(window, draw_fig)
-    greeting = tk.Label(text="Hello, Tkinter")
-    greeting.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
+    text_label = tk.Label(text="", relief="solid")
+    text_label.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
 
     # flat, groove, raised, ridge, solid, or sunken
-    speak_indicator = tk.Label(text="Indicator", font="bold", bg="red", relief="solid", )
+    speak_indicator = tk.Label(text="Indicator", bg="red", relief="solid")
     speak_indicator.pack(side=tk.RIGHT, fill=tk.BOTH, expand=1)
 
     start_btn = tk.Button(window, text="Begin Test",

@@ -6,7 +6,7 @@ import spacy
 import tkinter as tk
 from fuzzywuzzy import fuzz
 from random import sample, shuffle
-from playsound import playsound as ps
+import ctypes
 
 sys.path.append('..')
 
@@ -61,8 +61,9 @@ def start_test(aw, intro):
 
         result, confidence = asr("user_voice.wav")
         print('Confidence:', confidence)
-        print('Input:', result[0].lower())
-        if result is None and confidence < 0.75:
+        if result == [] or confidence == []:
+            aw.play(f'../resources/bad_result.wav')
+        elif confidence < 0.75:
             aw.play(f'../resources/bad_result.wav')
         else:
             print('before preprocess:', result[0], " == ", qa[1])
@@ -81,12 +82,18 @@ def start_test(aw, intro):
 if __name__ == "__main__":
     global speak_indicator, text_label
 
+    user32 = ctypes.windll.user32
+    screensize = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
+
     window = tk.Tk()
     window.title("VoCAPTCHA")
     window.iconbitmap('../resources/vocapcha_icon.ico')
 
+    window.minsize(width=int(screensize[0] / 2), height=int(screensize[1] / 2))
+    window.tk.call('tk', 'scaling', screensize[0]/1000)
+
     ag = AudioWave(window, draw_fig)
-    text_label = tk.Label(text="")
+    text_label = tk.Label(text="", relief="solid")
     text_label.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
 
     # flat, groove, raised, ridge, solid, or sunken
