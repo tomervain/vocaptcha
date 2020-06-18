@@ -50,9 +50,20 @@ def qa_parser_s4(attributes):
     qa_pairs.append((f'Where did {entity} saw {det} {animal}?', location))
     return qa_pairs
 
+
+def qa_parser_s5(attributes):
+    entity = attributes['entity']
+    topic = attributes['topic']
+    noun = attributes['noun']
+    qa_pairs = []
+    qa_pairs.append((f'Who\'s favorite {topic} is {noun}?', entity))
+    qa_pairs.append((f'What is {entity}\'s favorite {topic}?', noun))
+    return qa_pairs
+
 qa_parsers = {
     'S1': qa_parser_s1,
     'S2': qa_parser_s2,
     'S3': qa_parser_s3,
-    'S4': qa_parser_s4
+    'S4': qa_parser_s4,
+    'S5': qa_parser_s5
 }

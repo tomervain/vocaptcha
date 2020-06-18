@@ -50,9 +50,15 @@ def s4_parser(attributes, sentence):
     attributes['prep'] = sentence[4]
     attributes['location'] = sentence[-1]
 
+def s5_parser(attributes, sentence):
+    attributes['entity'] = sentence[0][:-2]
+    attributes['topic'] = sentence[2]
+    attributes['noun'] = sentence[-1]
+
 parsers = {
     'S1': s1_parser,
     'S2': s2_parser,
     'S3': s3_parser,
-    'S4': s4_parser
+    'S4': s4_parser,
+    'S5': s5_parser
 }

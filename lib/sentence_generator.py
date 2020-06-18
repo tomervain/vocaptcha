@@ -60,6 +60,9 @@ def fill_terminals(sentence):
         det_idx = exp.index('a')
         exp[det_idx] = 'an'
 
+    if k == 'S5':
+        exp[0] += '\'s'
+
     return (k, exp)
 
 
