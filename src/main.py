@@ -106,7 +106,7 @@ def start_test(aw, intro):
         elif tries < 3:
             aw.play(f'../resources/wrong.wav')
 
-    text_label.config(text="")
+    text_label.config(text="                                                  ")
 
     if score > 1:
         aw.play(f'../resources/test_passed.wav')
@@ -131,7 +131,7 @@ if __name__ == "__main__":
         window.tk.call('tk', 'scaling', 4.0)
 
     ag = AudioWave(window, draw_fig)
-    text_label = tk.Label(text="", relief="solid")
+    text_label = tk.Label(text="                                                  ", relief="solid")
     text_label.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
 
     # flat, groove, raised, ridge, solid, or sunken
