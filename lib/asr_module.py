@@ -6,6 +6,7 @@ from playsound import playsound as ps
 import traceback
 import pyaudio
 from six.moves import queue
+import numpy as np
 
 import re
 import sys
@@ -51,17 +52,20 @@ def transcribe_streaming(stream_file):
         # the audio.
 
         return_text = []
+        confidence = []
         for result in response.results:
-            print('Finished: {}'.format(result.is_final))
-            print('Stability: {}'.format(result.stability))
+            # print('Finished: {}'.format(result.is_final))
+            # print('Stability: {}'.format(result.stability))
             alternatives = result.alternatives
             # The alternatives are ordered from most likely to least.
             for alternative in alternatives:
-                print('Confidence: {}'.format(alternative.confidence))
-                print(u'Transcript: {}'.format(alternative.transcript))
+                # print('Confidence: {}'.format(alternative.confidence))
+                # print(u'Transcript: {}'.format(alternative.transcript))
                 return_text.append(alternative.transcript)
-
-        return return_text
+                confidence.append(alternative.confidence)
+        
+        confidence = np.mean(confidence)
+        return return_text, confidence
 
 
 ###########################3
