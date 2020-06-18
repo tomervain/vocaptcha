@@ -8,6 +8,8 @@ from fuzzywuzzy import fuzz
 from random import sample, shuffle
 from playsound import playsound as ps
 
+from lib.AudioWave import AudioWave
+
 sys.path.append('..')
 
 import lib.AnimateGif as AG
@@ -19,6 +21,9 @@ from lib.tts_module import text_to_speech as tts
 
 nlp = spacy.load('en_core_web_sm')
 
+def draw_fig(fig):
+    fig.canvas.draw()
+    fig.canvas.flush_events()
 
 def thread_test(ag, intro):
     start_test_thread = threading.Thread(target=lambda: start_test(ag, intro))
@@ -32,9 +37,9 @@ def preprocess(s):
     return ' '.join(words)
 
 
-def start_test(ag, intro):
+def start_test(aw, intro):
 
-    ps(f'../resources/{intro}.mp3')
+    aw.play(f'../resources/{intro}.wav')
 
     sentences = generate()
     qa_pairs = []
@@ -44,50 +49,56 @@ def start_test(ag, intro):
     pairs = sample(qa_pairs, k=3)
 
     for s in sentences:
-        tts(s.sentence_str)
+        tts(s.sentence_str, aw)
         time.sleep(2)
 
     for qa in pairs:
-        ag.set_audio_wave()
-        tts(qa[0])
-        ag.set_mic_on()
+        tts(qa[0], aw)
         print("please speak a word into the microphone")
+        speak_indicator.config(bg="green")
         rec("user_voice.wav")
+        speak_indicator.config(bg="red")
+
         result = asr("user_voice.wav")
-        ag.set_audio_wave()
         if result is None:
-            tts("Sorry but i dont understand")
+            aw.play(f'../resources/bad_result.wav')
         else:
             print('before preprocess:', result[0], " == ", qa[1])
             res = preprocess(result[0])
             ans = preprocess(qa[1])
             print('after preprocess:', res, " == ", ans)
             if fuzz.ratio(res, ans) >= 90:
-                tts("that is correct!")
+                aw.play(f'../resources/correct.wav')
             else:
-                tts("that is wrong!")
+                aw.play(f'../resources/wrong.wav')
 
     print("test finished")
 
 
 if __name__ == "__main__":
+    global speak_indicator
+
     window = tk.Tk()
     window.title("VoCAPTCHA")
     window.iconbitmap('../resources/vocapcha_icon.ico')
 
-    ag = AG.AnimateGif(window, 0, 1)
+    ag = AudioWave(window, 0, 1, draw_fig)
     greeting = tk.Label(text="Hello, Tkinter", width=60, height=10)
     greeting.grid(row=0, column=0)
 
+    # flat, groove, raised, ridge, solid, or sunken
+    speak_indicator = tk.Label(text="Indicator", font="bold", bg="red", width=58, height=7, relief="solid")
+    speak_indicator.grid(row=1, column=1)
+
     start_btn = tk.Button(window, text="Begin Test",
                           command=lambda: thread_test(ag, 'long_intro'))
-    start_btn.grid(row=1, column=0)
+    start_btn.grid(row=2, column=0)
 
     start_btn_short = tk.Button(
         window, text="Quick start", command=lambda: thread_test(ag, 'short_intro'))
-    start_btn_short.grid(row=1, column=1)
+    start_btn_short.grid(row=2, column=1)
 
     quit_btn = tk.Button(window, text="Quit", command=window.quit)
-    quit_btn.grid(row=1, column=2)
+    quit_btn.grid(row=2, column=2)
 
     window.mainloop()
