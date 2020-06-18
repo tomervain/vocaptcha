@@ -56,7 +56,8 @@ def start_test(aw, intro):
         tts(qa[0], aw)
 
         is_result_ok = False
-        while not is_result_ok:
+        tries = 0
+        while not is_result_ok and tries < 3:
             print("please speak a word into the microphone")
             speak_indicator.config(bg="green")
             rec("user_voice.wav")
@@ -66,10 +67,11 @@ def start_test(aw, intro):
             print('Confidence:', confidence)
             if len(result) == 0:
                 aw.play(f'../resources/bad_result.wav')
-            elif confidence < 0.75:
+            elif confidence < 0.8:
                 aw.play(f'../resources/bad_result.wav')
             else:
                 is_result_ok = True
+            tries += 1
 
         print('before preprocess:', result[0], " == ", qa[1])
         res = preprocess(result[0])
@@ -77,7 +79,7 @@ def start_test(aw, intro):
         print('after preprocess:', res, " == ", ans)
         if fuzz.ratio(res, ans) >= 90:
             aw.play(f'../resources/correct.wav')
-        else:
+        else if tries < 3:
             aw.play(f'../resources/wrong.wav')
 
     text_label.config(text="")
@@ -95,7 +97,8 @@ if __name__ == "__main__":
     window.iconbitmap('../resources/vocapcha_icon.ico')
 
     window.minsize(width=int(screensize[0] / 2), height=int(screensize[1] / 2))
-    window.tk.call('tk', 'scaling', screensize[0]/1000)
+    # window.tk.call('tk', 'scaling', screensize[0]/1000)
+    window.tk.call('tk', 'scaling', 4.0)
 
     ag = AudioWave(window, draw_fig)
     text_label = tk.Label(text="", relief="solid")
