@@ -55,6 +55,13 @@ def fill_terminals(sentence):
     if k == 'S3' and exp[-2][0] in 'aeiou':
         det_idx = exp.index('a')
         exp[det_idx] = 'an'
+    
+    if k == 'S4' and exp[3][0] in 'AEIOU':
+        det_idx = exp.index('a')
+        exp[det_idx] = 'an'
+
+    if k == 'S5':
+        exp[0] += '\'s'
 
     return (k, exp)
 

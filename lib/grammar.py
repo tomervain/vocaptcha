@@ -1,8 +1,10 @@
 grammar = {
-    'S': ['S1', 'S2', 'S3'],
+    'S': ['S1', 'S2', 'S3', 'S4', 'S5'],
     'S1': ['<name>', 'FEEL'],
     'S2': ['i', 'went', 'on', 'a', 'trip', 'with', 'PERSON', 'to', 'LOCATION'],
     'S3': ['PERSON', 'POSSES', 'a', 'NN_ADV'],
+    'S4': ['<name>', 'saw', 'a', 'ANIMAL_LOCATION'],
+    'S5': ['<name>', 'favorite', 'TOPIC_NOUN'],
     'FEEL': [
         ['likes to', 'VB_POS'],
         ['loves to', 'VB_POS'],
@@ -140,5 +142,29 @@ grammar = {
         'shiny',
         'golden',
         'silver'
+    ],
+    'ANIMAL_LOCATION': [
+        ['<animal_wild>', 'at', 'the', 'WILD_ANIMAL_LOC'],
+        ['<animal_water>', 'in', 'the', 'WATER_ANIMAL_LOC'],
+        ['<animal_jungle>', 'in', 'the', 'jungle'],
+        ['<animal_forest>', 'in', 'the', 'forest'],
+        ['<animal_safari>', 'at', 'the', 'safari'],
+        ['<animal_farm>', 'at', 'the', 'farm']
+    ],
+    'WILD_ANIMAL_LOC': [
+        'zoo',
+	    'natural reserve',
+	    'wildlife refuge',
+	    'wildlife sanctuary'
+    ],
+    'WATER_ANIMAL_LOC': [
+        'aquarium',
+	    'oceanarium',
+	    'ocean'
+    ],
+    'TOPIC_NOUN': [
+        ['sport', 'is', '<sports>'],
+        ['color', 'is', '<color>'],
+        ['dish', 'is', '<food_cooking>']
     ]
 }

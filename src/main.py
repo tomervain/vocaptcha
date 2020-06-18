@@ -62,7 +62,7 @@ def start_test(ag, intro):
             res = preprocess(result[0])
             ans = preprocess(qa[1])
             print('after preprocess:', res, " == ", ans)
-            if fuzz.ratio(res, ans) >= 95:
+            if fuzz.ratio(res, ans) >= 90:
                 tts("that is correct!")
             else:
                 tts("that is wrong!")
