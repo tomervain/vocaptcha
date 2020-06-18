@@ -7,20 +7,22 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import sys, traceback
+import tkinter as tk
 import threading
 from tkinter import TclError
 
 
 class AudioWave():
 
-    def __init__(self, parent, row, column, task):
+    def __init__(self, parent, task):
 
         self.parent = parent
         self.task = task
         self.fig, self.ax = plt.subplots(1, figsize=(4, 2))
 
         self.canvas = FigureCanvasTkAgg(self.fig, master=parent)
-        self.canvas.get_tk_widget().grid(row=row, column=column)
+        self.canvas.get_tk_widget().pack(fill=tk.BOTH, expand=1)
+
 
         self.CHUNK = 1024 * 2
         # variable for plotting

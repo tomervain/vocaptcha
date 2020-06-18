@@ -83,23 +83,23 @@ if __name__ == "__main__":
     window.title("VoCAPTCHA")
     window.iconbitmap('../resources/vocapcha_icon.ico')
 
-    ag = AudioWave(window, 0, 1, draw_fig)
-    greeting = tk.Label(text="Hello, Tkinter", width=60, height=10)
-    greeting.grid(row=0, column=0)
+    ag = AudioWave(window, draw_fig)
+    greeting = tk.Label(text="Hello, Tkinter")
+    greeting.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
 
     # flat, groove, raised, ridge, solid, or sunken
-    speak_indicator = tk.Label(text="Indicator", font="bold", bg="red", width=58, height=7, relief="solid")
-    speak_indicator.grid(row=1, column=1)
+    speak_indicator = tk.Label(text="Indicator", font="bold", bg="red", relief="solid")
+    speak_indicator.pack(side=tk.RIGHT, fill=tk.BOTH, expand=1)
 
     start_btn = tk.Button(window, text="Begin Test",
                           command=lambda: thread_test(ag, 'long_intro'))
-    start_btn.grid(row=2, column=0)
+    start_btn.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
 
     start_btn_short = tk.Button(
         window, text="Quick start", command=lambda: thread_test(ag, 'short_intro'))
-    start_btn_short.grid(row=2, column=1)
+    start_btn_short.pack(fill=tk.BOTH, expand=1)
 
     quit_btn = tk.Button(window, text="Quit", command=window.quit)
-    quit_btn.grid(row=2, column=2)
+    quit_btn.pack(side=tk.RIGHT, fill=tk.BOTH, expand=1)
 
     window.mainloop()
