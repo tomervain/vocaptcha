@@ -20,14 +20,17 @@ from lib.tts_module import text_to_speech as tts
 
 nlp = spacy.load('en_core_web_sm')
 
+
 def draw_fig(fig):
     fig.canvas.draw()
     fig.canvas.flush_events()
+
 
 def thread_test(ag, intro):
     start_test_thread = threading.Thread(target=lambda: start_test(ag, intro))
     start_test_thread.setDaemon(True)
     start_test_thread.start()
+
 
 def preprocess(s):
     s = s.lower()
@@ -39,7 +42,6 @@ def preprocess(s):
 def start_test(aw, intro):
     if intro == 'long_intro':
         aw.play(f'../resources/{intro}.wav')
-
 
         while True:
             print("please speak a word into the microphone")
@@ -55,7 +57,6 @@ def start_test(aw, intro):
                 aw.play(f'../resources/bad_result.wav')
             elif result[0] == 'ok' or result[0] == 'okay':
                 break
-
 
     aw.play(f'../resources/short_intro.wav')
 
