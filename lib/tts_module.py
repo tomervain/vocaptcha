@@ -2,6 +2,7 @@ from google.cloud import texttospeech as tts
 from playsound import playsound as ps
 import os
 
+
 def text_to_speech(input_text):
     # Instantiates a client
     client = tts.TextToSpeechClient()
@@ -23,7 +24,7 @@ def text_to_speech(input_text):
     response = client.synthesize_speech(input=synthesis_input, voice=voice, audio_config=audio_config)
 
     # The response's audio_content is binary.
-    path = input_text.replace('?','') + '.wav'
+    path = input_text.replace('?', '') + '.wav'
     with open(path, 'wb') as out:
         # Write the response to the output file.
         out.write(response.audio_content)
@@ -32,6 +33,7 @@ def text_to_speech(input_text):
     # play the file
     ps(path)
     os.remove(path)
+
 
 def text_to_speech(input_text, aw):
     # Instantiates a client
@@ -54,7 +56,7 @@ def text_to_speech(input_text, aw):
     response = client.synthesize_speech(input=synthesis_input, voice=voice, audio_config=audio_config)
 
     # The response's audio_content is binary.
-    path = input_text.replace('?','') + '.wav'
+    path = input_text.replace('?', '') + '.wav'
     with open(path, 'wb') as out:
         # Write the response to the output file.
         out.write(response.audio_content)

@@ -4,7 +4,6 @@ from struct import pack
 
 import pyaudio
 import wave
-import miniaudio as ma
 
 THRESHOLD = 500
 FORMAT = pyaudio.paInt16

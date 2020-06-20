@@ -10,7 +10,6 @@ import ctypes
 
 sys.path.append('..')
 
-import lib.AnimateGif as AG
 from lib.AudioWave import AudioWave
 from lib.asr_module import transcribe_streaming as asr
 from lib.qa_generator import generate_qa
